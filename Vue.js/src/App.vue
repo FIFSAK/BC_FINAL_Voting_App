@@ -27,15 +27,22 @@ export default {
   },
   methods: {
     async sendMessage() {
-      if(this.isLoading) return alert("Идет сохранение сообщения в блокчейне, подождите");
-      this.isLoading = true;
-      var from = await window.ethereum.request({ method: 'eth_requestAccounts' })
-      await this.chat.methods.add(this.text).send({
-        from: from[0]
-      })
-      this.getMessages();
-      this.text = "";
-      this.isLoading = false;
+      try{
+        if(this.isLoading) return alert("Идет сохранение сообщения в блокчейне, подождите");
+        this.isLoading = true;
+        var from = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        await this.chat.methods.add(this.text).send({
+          from: from[0]
+        })
+        this.getMessages();
+        this.text = "";
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+        alert("Ошибка при сохранении сообщения");
+        this.isLoading = false;
+      }
+
     },
     getMessages() {
       this.chat.methods.getSt().call().then(messages => this.messages = messages)
