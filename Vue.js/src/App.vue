@@ -2,6 +2,7 @@
   <div id="app">
     Отправить сообщение - <input v-model="text" type="text">
     <button @click="sendMessage">Отправить</button>
+    <div style="color: red" v-if="isLoading">Идет сохранение сообщения в блокчейне, подождите</div>
     <h1>Сообщения</h1>
     <li v-for="(el,i) in messages">{{el}}</li>
   </div>
@@ -14,7 +15,8 @@ export default {
     return {
       messages: [],
       text: "",
-      chat: null
+      chat: null,
+      isLoading: false,
     }
   },
   mounted() {
@@ -25,11 +27,15 @@ export default {
   },
   methods: {
     async sendMessage() {
+      if(this.isLoading) return alert("Идет сохранение сообщения в блокчейне, подождите");
+      this.isLoading = true;
       var from = await window.ethereum.request({ method: 'eth_requestAccounts' })
       await this.chat.methods.add(this.text).send({
         from: from[0]
       })
       this.getMessages();
+      this.text = "";
+      this.isLoading = false;
     },
     getMessages() {
       this.chat.methods.getSt().call().then(messages => this.messages = messages)
@@ -39,7 +45,6 @@ export default {
       let web3 = new Web3(window.ethereum);
       this.chat = new web3.eth.Contract(chatABI, chatAddress);
       this.getMessages();
-      this.text = "";
     }
   }
 }
