@@ -25,8 +25,9 @@ export default {
   },
   methods: {
     async sendMessage() {
+      var from = await window.ethereum.request({ method: 'eth_requestAccounts' })
       await this.chat.methods.add(this.text).send({
-        from: await window.ethereum.request({ method: 'eth_requestAccounts' })[0]
+        from: from[0]
       })
       this.getMessages();
     },
