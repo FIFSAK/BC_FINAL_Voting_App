@@ -1,4 +1,4 @@
-# Decentralized Chat
+# WEB3(Decentralized-Chat)
  
 DApp made with Vue.js and Solidity
 
