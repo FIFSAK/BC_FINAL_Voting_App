@@ -179,7 +179,7 @@ body, html {
 }
 
 img{
-    height: 300px;
+    height: 400px;
     object-fit: cover;
 }
 </style>
