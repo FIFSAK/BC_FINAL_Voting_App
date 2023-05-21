@@ -48,7 +48,7 @@ export default {
       this.chat.methods.getSt().call().then(messages => this.messages = messages)
     },
     startApp() {
-      var chatAddress = "0x90230C05Dc1B8C12AA974ed00CEa0B069b79cd60";
+      var chatAddress = "0x95F76A4e58f12eaDF20D402E4af1F60D0216c45D";
       let web3 = new Web3(window.ethereum);
       this.chat = new web3.eth.Contract(chatABI, chatAddress);
       this.getMessages();

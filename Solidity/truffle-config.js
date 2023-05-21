@@ -1,22 +1,41 @@
 
 const HDWalletProvider = require("truffle-hdwallet-provider");
 
-// Set your own mnemonic here
-const mnemonic = "dune autumn picture clever bird cream coast coach enlist raccoon donkey razor";
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 
-// Module exports to make this configuration available to Truffle itself
 module.exports = {
-  // Object with configuration for each network
   networks: {
-    // Configuration for rinkeby network
-    rinkeby: {
-      // Special function to setup the provider
-      provider: function () {
-        // Setting the provider with the Infura Rinkeby address and Token
-        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/5760cba7b3f545b1912020131adea4c0")
-      },
-      network_id: 4,
-      from: "0x88fE68893355813D9a4C9154416e9Dcee340F58e"
+    development: {
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard BSC port (default: none)
+      network_id: "*",       // Any network (default: none)
+    },
+    testnet: {
+      provider: () => new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545`),
+      network_id: 97,
+      confirmations: 10,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
+    bsc: {
+      provider: () => new HDWalletProvider(mnemonic, `https://bsc-dataseed1.binance.org`),
+      network_id: 56,
+      confirmations: 10,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
+  },
+
+  // Set default mocha options here, use special reporters etc.
+  mocha: {
+    // timeout: 100000
+  },
+
+  // Configure your compilers
+  compilers: {
+    solc: {
+      version: "0.8.4", // A version or constraint - Ex. "^0.5.0"
     }
   }
-};
+}
