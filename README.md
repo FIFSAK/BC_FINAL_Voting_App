@@ -1,4 +1,4 @@
-# WEB3(Decentralized-Chat)
+# WEB3(WEB3_Voting_App)
  
 DApp made with Vue.js and Solidity
 
@@ -6,4 +6,4 @@ DApp made with Vue.js and Solidity
 
 You should have MetaMask extention installed for that example.
 
-It also should have some test Ethers to pay for transactions.
+It also should have some test BNB to pay for transactions.
