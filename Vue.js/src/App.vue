@@ -2,7 +2,7 @@
     <div class="bg">
         <div class="container-fluid bg-head py-3">
             <div class="container">
-                <h1 class="text-center">Blockchain Voting Platform</h1>
+                <h1 class="text-center">Blockchain Voting Platform(uses <strong>test bnb chain)</strong></h1>
                 <p class="text-center">Your votes are transparent and secure with the power of blockchain technology.</p>
             </div>
         </div>
