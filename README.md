@@ -1,6 +1,6 @@
 # WEB3(WEB3_Voting_App)
  
-DApp made with Vue.js and Solidity
+DApp made with Vue.js and Solidity(it uses test bnb chain)
 
 [DEMO](https://decentralized-chat-rho.vercel.app)
 [YouTube](https://www.youtube.com/watch?v=YWg8RbfcWAU)
