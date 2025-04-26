@@ -1,159 +1,191 @@
-import {useEffect, useState} from "react";
-import {ethers} from "ethers";
+import { useEffect, useState } from "react";
+import { BrowserProvider, Contract, parseEther, formatEther } from "ethers";
 import votingABI from "./contracts/Voting.json";
 import tokenABI from "./contracts/VoteToken.json";
 import "./App.css";
 
-const VOTING_ADDRESS = "0x144d6a2489389Fd43E2B47d21D490D44Be30b4aa";
-const TOKEN_ADDRESS = "0x2bf0A8696E22e204ebBcabDeA7BA504b8ED9A5B2";
+const VOTING_ADDRESS = "0x07c8a74738e6B979A112A82f577c6b1A0B77DC5F";
+const TOKEN_ADDRESS = "0x8307d49A664C8F2FBf853f20e84fA2724222e563";
 
 function App() {
     const [account, setAccount] = useState("");
     const [proposal, setProposal] = useState("");
-    const [amount, setAmount] = useState("");
+    const [optionInput, setOptionInput] = useState("");
+    const [options, setOptions] = useState([]);
+    const [amounts, setAmounts] = useState({}); // Для разных полей ввода токенов
     const [proposals, setProposals] = useState([]);
     const [voteToken, setVoteToken] = useState(null);
     const [votingContract, setVotingContract] = useState(null);
     const [winner, setWinner] = useState("");
 
-    // Подключаем кошелек MetaMask
     const connectWallet = async () => {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
-        setAccount(address);
+        if (window.ethereum) {
+            try {
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                const provider = new BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const address = await signer.getAddress();
+                setAccount(address);
 
-        const tokenContract = new ethers.Contract(TOKEN_ADDRESS, tokenABI, signer);
-        const votingContractInstance = new ethers.Contract(VOTING_ADDRESS, votingABI, signer);
+                const tokenContract = new Contract(TOKEN_ADDRESS, tokenABI, signer);
+                const votingContractInstance = new Contract(VOTING_ADDRESS, votingABI, signer); // signer обязательно!
 
-        setVoteToken(tokenContract);
-        setVotingContract(votingContractInstance);
+                setVoteToken(tokenContract);
+                setVotingContract(votingContractInstance);
 
-        const proposalCount = await votingContractInstance.getProposals();
-        const proposals = await Promise.all(proposalCount.map(async (proposal) => {
-            const name = proposal.name;         // убрал await
-            const votes = proposal.voteCount;   // убрал await
-            return {name, votes};
-        }));
-
-        setProposals(proposals);
+                await loadProposals(votingContractInstance);
+            } catch (error) {
+                console.error("Ошибка при подключении кошелька:", error);
+            }
+        } else {
+            alert("Установите MetaMask!");
+        }
     };
 
-    // Создание предложения
-    const createProposal = async () => {
+    const loadProposals = async (votingInstance) => {
         try {
-            // Вызов контракта для добавления нового предложения
-            const tx = await votingContract.addProposal(proposal);
-            await tx.wait();
-
-            alert("Предложение успешно создано!");
-
-            // Обновляем список предложений после добавления
-            const proposalCount = await votingContract.getProposals();
-            const proposals = await Promise.all(proposalCount.map(async (proposal) => {
-                const name = proposal.name;
-                const votes = proposal.voteCount;
-                return {name, votes};
+            const [proposalNames, optionNames, voteCounts] = await votingInstance.getProposals();
+            const proposalsList = proposalNames.map((name, index) => ({
+                name,
+                options: optionNames[index].map((optionName, i) => ({
+                    name: optionName,
+                    votes: voteCounts[index][i]
+                }))
             }));
+            setProposals(proposalsList);
+        } catch (error) {
+            console.error("Ошибка при загрузке предложений:", error);
+        }
+    };
 
-            setProposals(proposals); // Обновляем состояние предложений
-            setProposal(""); // Очищаем поле ввода
+    const createProposal = async () => {
+        if (!proposal || options.length === 0) {
+            alert("Введите название и хотя бы один вариант голосования.");
+            return;
+        }
+
+        try {
+            const tx = await votingContract.addProposal(proposal, options);
+            await tx.wait();
+            alert("✅ Предложение успешно создано!");
+
+            setProposal("");
+            setOptions([]);
+            setOptionInput("");
+
+            await loadProposals(votingContract);
         } catch (error) {
             console.error("Ошибка при создании предложения:", error);
+            alert(`Ошибка при создании предложения: ${error.message || error}`);
         }
     };
 
+    const addOption = () => {
+        if (optionInput.trim() !== "") {
+            setOptions([...options, optionInput.trim()]);
+            setOptionInput("");
+        }
+    };
 
-    // Проголосовать
-    const vote = async (id) => {
+    const vote = async (proposalId, optionId) => {
+        const enteredAmount = amounts[`${proposalId}-${optionId}`];
+
+        if (!enteredAmount || isNaN(Number(enteredAmount)) || Number(enteredAmount) <= 0) {
+            alert("Введите количество токенов для голосования");
+            return;
+        }
+
         try {
-            const parsedAmount = ethers.parseEther(amount);
-
-            // Проверка allowance токенов
+            const parsedAmount = parseEther(enteredAmount);
             const allowance = await voteToken.allowance(account, VOTING_ADDRESS);
-            if (allowance < parsedAmount) {
+
+            if (allowance < parsedAmount) { // НЕ BigInt, нормальная проверка!
                 const approveTx = await voteToken.approve(VOTING_ADDRESS, parsedAmount);
                 await approveTx.wait();
-                console.log("✅ Approve прошёл успешно");
             }
 
-            // Вызов метода голосования
-            const tx = await votingContract.vote(id, parsedAmount);
+
+            const tx = await votingContract.vote(proposalId, optionId, parsedAmount);
             await tx.wait();
+            alert("Голос успешно учтен!");
 
-            console.log("✅ Стейкинг прошёл успешно");
-
-            // Обновление предложений с актуальными голосами
-            const proposalCount = await votingContract.getProposals();
-            const proposals = await Promise.all(proposalCount.map(async (proposal) => {
-                const name = proposal.name;
-                const votes = proposal.voteCount;
-                return {name, votes};
-            }));
-
-            setProposals(proposals); // Обновляем состояние с новыми данными о предложениях
-            setAmount(""); // Очищаем поле ввода
+            setAmounts({ ...amounts, [`${proposalId}-${optionId}`]: "" });
+            await loadProposals(votingContract);
         } catch (error) {
             console.error("Ошибка при голосовании:", error);
-            alert(`Ошибка: ${error.reason || error.message}`);
         }
     };
 
-
-    // Получить победителя
     const getWinner = async () => {
+        if (!votingContract) return;
+
         try {
-            const [winnerId, winnerName, votes] = await votingContract.getWinner();
-            setWinner(`${winnerName} с ${ethers.formatEther(votes)} голосами`);
+            const [winnerName, winnerOption, winnerVotes] = await votingContract.getWinner();
+            setWinner(`${winnerName} — ${winnerOption} (${formatEther(winnerVotes)} голосов)`);
         } catch (error) {
             console.error("Ошибка при получении победителя:", error);
+            alert("Голосование еще не завершено.");
         }
     };
 
     useEffect(() => {
-        if (window.ethereum) {
-            connectWallet();
-        }
+        connectWallet();
     }, []);
 
     return (
         <div className="app">
-            <h1>DeFi Voting DApp</h1>
-            <p className="account-info"><strong>Подключенный аккаунт:</strong> {account}</p>
+            <h1>🗳️ DeFi Voting DApp</h1>
+            <p><strong>Аккаунт:</strong> {account}</p>
 
-            <div>
+            <div className="create-proposal">
                 <h2>Создать предложение</h2>
                 <input
                     type="text"
-                    placeholder="Введите название предложения"
+                    placeholder="Название предложения"
                     value={proposal}
                     onChange={(e) => setProposal(e.target.value)}
                 />
+                <div className="option-adding">
+                    <input
+                        type="text"
+                        placeholder="Добавить вариант"
+                        value={optionInput}
+                        onChange={(e) => setOptionInput(e.target.value)}
+                    />
+                    <button onClick={addOption}>Добавить вариант</button>
+                </div>
+                <ul>
+                    {options.map((opt, idx) => (
+                        <li key={idx}>{opt}</li>
+                    ))}
+                </ul>
                 <button onClick={createProposal}>Создать предложение</button>
             </div>
 
             <div className="proposals">
                 <h2>Голосование</h2>
-                <input
-                    type="number"
-                    placeholder="Введите количество токенов"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                />
-                <div>
-                    {proposals.map((prop, index) => (
-                        <div key={index}>
-                            <p>{prop.name} — {ethers.formatEther(prop.votes)} голосов</p>
-                            <button onClick={() => vote(index)}>Голосовать</button>
-                        </div>
-                    ))}
-                </div>
+                {proposals.map((proposal, index) => (
+                    <div key={index} className="proposal">
+                        <p><strong>{proposal.name}</strong></p>
+                        {proposal.options.map((option, idx) => (
+                            <div key={idx}>
+                                <p>{option.name} — {formatEther(option.votes)} голосов</p>
+                                <input
+                                    type="text"
+                                    placeholder="Сколько токенов?"
+                                    value={amounts[`${index}-${idx}`] || ""}
+                                    onChange={(e) => setAmounts({ ...amounts, [`${index}-${idx}`]: e.target.value })}
+                                />
+                                <button onClick={() => vote(index, idx)}>Голосовать</button>
+                            </div>
+                        ))}
+                    </div>
+                ))}
             </div>
 
-            <div className="status">
-                <h2>Победитель голосования</h2>
+            <div className="winner">
                 <button onClick={getWinner}>Посмотреть победителя</button>
-                {winner && <p>Победитель: {winner}</p>}
+                {winner && <p>🏆 Победитель: {winner}</p>}
             </div>
         </div>
     );

@@ -1,163 +1,75 @@
-/* Общие стили */
-body {
-  background-color: #f8f9fa;
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* Основной контейнер */
 .app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  margin: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
-  width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-/* Заголовок */
-h1 {
-  font-size: 2.5rem;
-  color: #007bff;
-  margin-bottom: 20px;
-  text-align: center;
+.error {
+    color: red;
+    padding: 10px;
+    background: #ffeeee;
+    border-radius: 4px;
+    margin: 10px 0;
 }
 
-/* Информация о подключенном аккаунте */
-.account-info {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-  background-color: #eef2f5;
-  padding: 10px;
-  border-radius: 8px;
-  width: 100%;
-  text-align: center;
-  font-weight: bold;
+.loading {
+    color: #666;
+    padding: 10px;
 }
 
-/* Создание предложения */
-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+.owner-badge {
+    color: gold;
+    background: #333;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: bold;
 }
 
-input[type="text"],
-input[type="number"] {
-  width: 100%;
-  padding: 15px;
-  font-size: 1rem;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
+.proposal-card, .option-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus {
-  border-color: #007bff;
-  outline: none;
+.vote-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
-/* Кнопки */
 button {
-  width: 100%;
-  padding: 12px;
-  font-size: 1.1rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    padding: 8px 16px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
 }
 
-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
 }
 
-button:active {
-  background-color: #003d7a;
+input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
 }
 
-/* Секция предложений */
-.proposals {
-  width: 100%;
-  margin-top: 20px;
+.options-list {
+    list-style: none;
+    padding: 0;
 }
 
-/* Каждый блок предложения */
-.proposals div {
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.proposals div p {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-}
-
-.proposals div button {
-  margin-left: 10px;
-}
-
-/* Секция с результатами */
-.status {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  padding: 20px;
-  border-radius: 8px;
-  width: 100%;
-  margin-top: 30px;
-  text-align: center;
-}
-
-.status h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.status button {
-  width: auto;
-  background-color: #28a745;
-}
-
-.winner {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.status, .winner {
-  box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.2);
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.app {
-  animation: fadeIn 1s ease-out;
+.options-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
 }

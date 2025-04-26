@@ -1,12 +1,6 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -16,6 +10,11 @@
         "internalType": "string",
         "name": "name",
         "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "options",
+        "type": "string[]"
       }
     ],
     "name": "addProposal",
@@ -25,24 +24,29 @@
   },
   {
     "inputs": [],
+    "name": "endVoting",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getProposals",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "voteCount",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Voting.Proposal[]",
+        "internalType": "string[]",
         "name": "",
-        "type": "tuple[]"
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "",
+        "type": "string[][]"
+      },
+      {
+        "internalType": "uint256[][]",
+        "name": "",
+        "type": "uint256[][]"
       }
     ],
     "stateMutability": "view",
@@ -53,19 +57,32 @@
     "name": "getWinner",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "winnerId",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "winnerProposal",
+        "type": "string"
       },
       {
         "internalType": "string",
-        "name": "winnerName",
+        "name": "winnerOption",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "votes",
+        "name": "winnerVotes",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -85,11 +102,6 @@
         "internalType": "string",
         "name": "name",
         "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "voteCount",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -104,6 +116,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "optionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       }
@@ -114,13 +131,37 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "voteToken",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "votes",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "votingOpen",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
