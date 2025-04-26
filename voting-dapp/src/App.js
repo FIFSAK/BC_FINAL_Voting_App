@@ -4,7 +4,7 @@ import votingABI from "./contracts/Voting.json";
 import tokenABI from "./contracts/VoteToken.json";
 import "./App.css";
 
-const VOTING_ADDRESS = "0x07c8a74738e6B979A112A82f577c6b1A0B77DC5F";
+const VOTING_ADDRESS = "0xe69877a1d2F0E50C8d7AA8F143246b5320897f18";
 const TOKEN_ADDRESS = "0x8307d49A664C8F2FBf853f20e84fA2724222e563";
 
 function App() {

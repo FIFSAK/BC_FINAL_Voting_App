@@ -1,75 +1,120 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1f1c2c, #54005a);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'Poppins', sans-serif;
+}
+
 .app {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 25px;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    border-radius: 16px;
+    color: #f0f0f0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+h1, h2 {
+    text-align: center;
+    color: #000000;
 }
 
 .error {
-    color: red;
-    padding: 10px;
-    background: #ffeeee;
-    border-radius: 4px;
-    margin: 10px 0;
+    color: #ff4d4d;
+    background: #330000;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-weight: bold;
 }
 
 .loading {
-    color: #666;
+    color: #cccccc;
+    font-style: italic;
     padding: 10px;
 }
 
 .owner-badge {
-    color: gold;
-    background: #333;
-    padding: 5px 10px;
+    color: #ffcc00;
+    background: #222;
+    padding: 5px 12px;
     border-radius: 20px;
     display: inline-block;
     font-weight: bold;
+    box-shadow: 0 0 5px #ffcc00;
 }
 
 .proposal-card, .option-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
+    background: #2e2a4a;
+    border: 1px solid #555;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 12px;
+    transition: 0.3s ease;
+}
+
+.proposal-card:hover, .option-card:hover {
+    background: #3d3759;
 }
 
 .vote-controls {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 button {
     cursor: pointer;
-    padding: 8px 16px;
-    background: #4CAF50;
+    padding: 10px 20px;
+    background: #6a00f4;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #9a00ff;
 }
 
 button:disabled {
-    background: #cccccc;
+    background: #444;
     cursor: not-allowed;
 }
 
 input {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 6px;
     width: 100%;
-    max-width: 300px;
+    max-width: 350px;
+    background: #1e1e2f;
+    color: #fff;
+    margin: 5px 0;
+}
+
+input::placeholder {
+    color: #aaa;
 }
 
 .options-list {
     list-style: none;
     padding: 0;
+    margin-top: 10px;
 }
 
 .options-list li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    padding: 6px 0;
+    border-bottom: 1px solid #555;
 }
