@@ -13,7 +13,7 @@
       },
       {
         "internalType": "string[]",
-        "name": "options",
+        "name": "optionNames",
         "type": "string[]"
       }
     ],
@@ -23,8 +23,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "endVoting",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalId",
+        "type": "uint256"
+      }
+    ],
+    "name": "endProposalVoting",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -47,20 +53,26 @@
         "internalType": "uint256[][]",
         "name": "",
         "type": "uint256[][]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "",
+        "type": "bool[]"
       }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalId",
+        "type": "uint256"
+      }
+    ],
     "name": "getWinner",
     "outputs": [
-      {
-        "internalType": "string",
-        "name": "winnerProposal",
-        "type": "string"
-      },
       {
         "internalType": "string",
         "name": "winnerOption",
@@ -70,6 +82,30 @@
         "internalType": "uint256",
         "name": "winnerVotes",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "hasVoted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -102,6 +138,11 @@
         "internalType": "string",
         "name": "name",
         "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "isOpen",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -128,43 +169,6 @@
     "name": "vote",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "votes",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "votingOpen",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

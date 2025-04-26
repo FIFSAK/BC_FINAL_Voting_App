@@ -2,32 +2,30 @@
 pragma solidity ^0.8.28;
 
 contract Voting {
-    address public owner; // Создатель контракта
-    bool public votingOpen = true; // Статус голосования
+    address public owner;
 
-    // Структура для варианта голосования
     struct Option {
-        string name; // Название варианта
-        uint256 voteCount; // Количество голосов за вариант
+        string name;
+        uint256 voteCount;
     }
 
-    // Структура для предложения с несколькими вариантами
     struct Proposal {
-        string name; // Название предложения
-        Option[] options; // Массив вариантов для голосования
+        string name;
+        Option[] options;
+        bool isOpen; // Теперь каждый Proposal имеет свой статус открытости
     }
 
-    Proposal[] public proposals; // Все предложения
+    Proposal[] public proposals;
 
-    mapping(address => mapping(uint256 => uint256)) public votes; // Голоса пользователей по предложению и варианту
+    mapping(address => mapping(uint256 => bool)) public hasVoted; // следим за голосованием по каждому proposal
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this.");
+        require(msg.sender == owner, "Only owner can call this.");
         _;
     }
 
-    modifier votingActive() {
-        require(votingOpen, "Voting is closed.");
+    modifier proposalActive(uint256 proposalId) {
+        require(proposals[proposalId].isOpen, "Voting for this proposal is closed.");
         _;
     }
 
@@ -35,46 +33,41 @@ contract Voting {
         owner = msg.sender;
     }
 
-    // Функция для создания предложения с несколькими вариантами
-    function addProposal(string memory name, string[] memory options) public onlyOwner {
+    function addProposal(string memory name, string[] memory optionNames) public onlyOwner {
         Proposal storage newProposal = proposals.push();
         newProposal.name = name;
+        newProposal.isOpen = true;
 
-        for (uint256 i = 0; i < options.length; i++) {
-            newProposal.options.push(Option({name: options[i], voteCount: 0}));
+        for (uint256 i = 0; i < optionNames.length; i++) {
+            newProposal.options.push(Option({name: optionNames[i], voteCount: 0}));
         }
     }
 
-    // Функция для голосования за вариант в предложении
-    function vote(uint256 proposalId, uint256 optionId, uint256 amount) public votingActive {
+    function vote(uint256 proposalId, uint256 optionId, uint256 amount) public proposalActive(proposalId) {
         require(proposalId < proposals.length, "Invalid proposal");
         require(optionId < proposals[proposalId].options.length, "Invalid option");
         require(amount > 0, "Amount must be greater than 0");
+        require(!hasVoted[msg.sender][proposalId], "Already voted for this proposal");
 
-        // Проверка, что пользователь не голосовал за данный вариант
-        require(votes[msg.sender][proposalId] == 0, "You already voted for this proposal");
-
-        // Увеличиваем количество голосов за вариант
         proposals[proposalId].options[optionId].voteCount += amount;
-
-        // Сохраняем, что пользователь проголосовал за этот вариант
-        votes[msg.sender][proposalId] = amount;
+        hasVoted[msg.sender][proposalId] = true;
     }
 
-    // Завершение голосования
-    function endVoting() public onlyOwner {
-        votingOpen = false;
+    function endProposalVoting(uint256 proposalId) public onlyOwner {
+        require(proposalId < proposals.length, "Invalid proposal");
+        proposals[proposalId].isOpen = false;
     }
 
-    // Получение всех предложений с вариантами
-    function getProposals() public view returns (string[] memory, string[][] memory, uint256[][] memory) {
+    function getProposals() public view returns (string[] memory, string[][] memory, uint256[][] memory, bool[] memory) {
         uint256 length = proposals.length;
         string[] memory proposalNames = new string[](length);
         string[][] memory optionNames = new string[][](length);
         uint256[][] memory voteCounts = new uint256[][](length);
+        bool[] memory openStatuses = new bool[](length);
 
         for (uint256 i = 0; i < length; i++) {
             proposalNames[i] = proposals[i].name;
+            openStatuses[i] = proposals[i].isOpen;
 
             uint256 optionsLength = proposals[i].options.length;
             optionNames[i] = new string[](optionsLength);
@@ -86,22 +79,20 @@ contract Voting {
             }
         }
 
-        return (proposalNames, optionNames, voteCounts);
+        return (proposalNames, optionNames, voteCounts, openStatuses);
     }
 
-    // Получить победителя (с предложением с максимальным количеством голосов)
-    function getWinner() public view returns (string memory winnerProposal, string memory winnerOption, uint256 winnerVotes) {
-        require(!votingOpen, "Voting is still open.");
-        uint256 winningVoteCount = 0;
+    function getWinner(uint256 proposalId) public view returns (string memory winnerOption, uint256 winnerVotes) {
+        require(proposalId < proposals.length, "Invalid proposal");
+        require(!proposals[proposalId].isOpen, "Voting for this proposal is still open.");
 
-        for (uint256 i = 0; i < proposals.length; i++) {
-            for (uint256 j = 0; j < proposals[i].options.length; j++) {
-                if (proposals[i].options[j].voteCount > winningVoteCount) {
-                    winningVoteCount = proposals[i].options[j].voteCount;
-                    winnerProposal = proposals[i].name;
-                    winnerOption = proposals[i].options[j].name;
-                    winnerVotes = proposals[i].options[j].voteCount;
-                }
+        uint256 highestVote = 0;
+
+        for (uint256 i = 0; i < proposals[proposalId].options.length; i++) {
+            if (proposals[proposalId].options[i].voteCount > highestVote) {
+                highestVote = proposals[proposalId].options[i].voteCount;
+                winnerOption = proposals[proposalId].options[i].name;
+                winnerVotes = proposals[proposalId].options[i].voteCount;
             }
         }
     }
