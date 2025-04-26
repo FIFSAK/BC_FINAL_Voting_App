@@ -1,10 +1,13 @@
-# WEB3(WEB3_Voting_App)
- 
-DApp made with Vue.js and Solidity(it uses test bnb chain)
+# Sample Hardhat Project
 
-[DEMO](https://decentralized-chat-rho.vercel.app)
-[YouTube](https://www.youtube.com/watch?v=YWg8RbfcWAU)
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
 
-You should have MetaMask extention installed for that example.
+Try running some of the following tasks:
 
-It also should have some test BNB to pay for transactions.
+```shell
+npx hardhat help
+npx hardhat test
+REPORT_GAS=true npx hardhat test
+npx hardhat node
+npx hardhat ignition deploy ./ignition/modules/Lock.js
+```

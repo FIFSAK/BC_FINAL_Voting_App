@@ -1,0 +1,29 @@
+{
+  "name": "bc_final_voting_app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FIFSAK/BC_FINAL_Voting_App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FIFSAK/BC_FINAL_Voting_App/issues"
+  },
+  "homepage": "https://github.com/FIFSAK/BC_FINAL_Voting_App#readme",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.23.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.3.0",
+    "dotenv": "^16.5.0",
+    "ethers": "^6.13.5"
+  }
+}
